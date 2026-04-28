@@ -424,7 +424,19 @@
         );
         const json = await res.json();
         if (json.success) {
-          currentData = json.data;
+          // تصفية البيانات: استبعاد أي عنصر يشبه عنوان العمود
+          let filtered = json.data.filter((item) => {
+            // إذا كان الاسم أو الدعوة يساوي "الاسم" أو "الدعوة" أو "تاريخ" أو "تم" – نتخطى
+            const name = String(item.name || "").trim();
+            const duaa = String(item.duaa || "").trim();
+            if (name === "الاسم" || duaa === "الدعوة") return false;
+            if (name === "name" || duaa === "duaa") return false;
+            if (name === "" || duaa === "") return false;
+            // أيضاً نتأكد إن اسم العمود مش موجود (مثلاً لو أول سطر جاي كعنوان)
+            if (name === "تاريخ" || duaa === "دعوة") return false;
+            return true;
+          });
+          currentData = filtered;
           renderReview();
         } else showToast("خطأ في التحميل");
       }
@@ -462,10 +474,9 @@
       }
 
       function toggleDone(rowIndex) {
-        // نغير الحالة محلياً في المصفوفة currentData
         const idx = currentData.findIndex((i) => i.rowIndex === rowIndex);
         if (idx !== -1) currentData[idx].done = !currentData[idx].done;
-        renderReview(); // مجرد تحديث للواجهة بدون حفظ
+        renderReview();
       }
 
       function uncheckAll() {
@@ -483,7 +494,6 @@
         const original = btn.innerHTML;
         btn.innerHTML = "<span class='loading-spinner'></span> جاري الحفظ...";
         btn.disabled = true;
-        // نبني object المفاتيح فيه rowIndex والقيمة true/false
         const progressObj = {};
         currentData.forEach((item) => {
           progressObj[item.rowIndex] = item.done;
@@ -508,7 +518,6 @@
         }
       }
 
-      // إضافة دعوات جديدة
       function addRow() {
         const container = document.getElementById("duaa-rows");
         const div = document.createElement("div");
