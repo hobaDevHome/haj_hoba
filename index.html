@@ -387,7 +387,7 @@
 
     <script>
       const APP_URL =
-        "https://script.google.com/macros/s/AKfycbxHj7JAogkdZEZwkQaUxcwQv-iliBSNaQLz6NznGGEGsSeeO6sre73BqCxxIyMXsRCu/exec";
+        "https://script.google.com/macros/s/AKfycbx8DpWVaf8WIXWUssPrZxuUby_JTDWMzVblASHXoJ7a-T5Hf6H4UN6n_YbDP_N7jZNa/exec";
       let sessionPassword = "";
       let currentData = []; // array of objects { name, duaa, done, rowIndex }
 
@@ -441,6 +441,8 @@
             return true;
           });
           currentData = filtered;
+          console.log(currentData);
+
           renderReview();
         } else showToast("خطأ في التحميل");
       }
@@ -478,7 +480,10 @@
       }
 
       function toggleDone(rowIndex) {
-        const idx = currentData.findIndex((i) => i.rowIndex === rowIndex);
+        rowIndex = Number(rowIndex);
+        const idx = currentData.findIndex(
+          (i) => Number(i.rowIndex) === rowIndex,
+        );
         if (idx !== -1) currentData[idx].done = !currentData[idx].done;
         renderReview();
       }
