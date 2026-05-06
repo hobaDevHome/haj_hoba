@@ -13,7 +13,6 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
     <style>
-      /* نفس الاستايل الروحاني السابق - مختصر هنا عشان الطول بس استايل جميل زي ما تحبي */
       :root {
         --primary: #1a5f5a;
         --primary-dark: #0e3b38;
@@ -90,6 +89,11 @@
         border: none;
         box-shadow: var(--shadow);
         font-family: "Cairo", sans-serif;
+        font-size: 16px;
+      }
+      .btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
       }
       .btn-primary {
         background: linear-gradient(
@@ -120,6 +124,18 @@
         width: 100%;
         box-shadow: var(--shadow);
       }
+      .form-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 24px;
+      }
+      .form-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 8px;
+      }
       .field {
         margin-bottom: 24px;
       }
@@ -135,6 +151,11 @@
         border: 2px solid var(--border-color);
         border-radius: 16px;
         font-family: inherit;
+        font-size: 15px;
+      }
+      textarea {
+        resize: vertical;
+        min-height: 60px;
       }
       .duaa-row {
         display: flex;
@@ -150,6 +171,7 @@
         border-radius: 12px;
         width: 40px;
         cursor: pointer;
+        color: #c0392b;
       }
       .btn-add-row {
         width: 100%;
@@ -160,6 +182,8 @@
         margin-top: 8px;
         cursor: pointer;
         font-family: "Cairo", sans-serif;
+        font-size: 15px;
+        color: var(--primary);
       }
       .review-container {
         max-width: 800px;
@@ -170,6 +194,12 @@
         justify-content: space-between;
         margin-bottom: 24px;
         flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+      .review-header h2 {
+        font-size: 24px;
+        color: var(--primary);
       }
       .stats-bar {
         display: flex;
@@ -225,6 +255,7 @@
         cursor: pointer;
         font-size: 18px;
         color: transparent;
+        flex-shrink: 0;
       }
       .check-btn.checked {
         background: var(--primary);
@@ -252,6 +283,7 @@
         padding: 12px 24px;
         border-radius: 50px;
         transition: 0.2s;
+        z-index: 999;
       }
       .toast.show {
         transform: translateX(-50%) translateY(0);
@@ -263,13 +295,18 @@
         border: 2px solid rgba(255, 255, 255, 0.3);
         border-top-color: white;
         border-radius: 50%;
-        animation: spin 0.6s linear;
-        margin-right: 8px;
+        animation: spin 0.6s linear infinite;
+        vertical-align: middle;
       }
       @keyframes spin {
         to {
           transform: rotate(360deg);
         }
+      }
+      .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #999;
       }
     </style>
   </head>
@@ -277,7 +314,6 @@
     <div class="page active" id="page-home">
       <div class="kaaba-icon"><i class="fas fa-kaaba"></i></div>
       <h1>دعوات رحلة الحج</h1>
-
       <div
         style="
           display: flex;
@@ -306,15 +342,15 @@
             <i class="fas fa-feather-alt"></i> أضف دعواتك
           </div>
           <div class="field">
-            <label>اسمك</label
-            ><input type="text" id="input-name" placeholder="مثال:  أحمد" />
+            <label>اسمك</label>
+            <input type="text" id="input-name" placeholder="مثال: أحمد" />
           </div>
           <div class="field">
             <label>الدعوات</label>
             <div id="duaa-rows">
               <div class="duaa-row">
-                <textarea placeholder="اكتب دعوتك..."></textarea
-                ><button class="btn-remove" onclick="removeRow(this)">
+                <textarea placeholder="اكتب دعوتك..."></textarea>
+                <button class="btn-remove" onclick="removeRow(this)">
                   <i class="fas fa-trash"></i>
                 </button>
               </div>
@@ -324,9 +360,18 @@
             </button>
           </div>
           <div class="form-actions">
-            <button class="btn btn-outline" onclick="goTo('page-home')">
-              إلغاء</button
-            ><button class="btn btn-success" onclick="submitDuaa()">
+            <button
+              class="btn btn-outline"
+              id="cancelBtn"
+              onclick="goTo('page-home')"
+            >
+              إلغاء
+            </button>
+            <button
+              class="btn btn-success"
+              id="submitBtn"
+              onclick="submitDuaa()"
+            >
               <i class="fas fa-save"></i> حفظ الدعوات
             </button>
           </div>
@@ -344,8 +389,8 @@
             <i class="fas fa-lock"></i> الدخول للدعوات
           </div>
           <div class="field">
-            <label>كلمة السر</label
-            ><input
+            <label>كلمة السر</label>
+            <input
               type="password"
               id="input-password"
               placeholder="كلمة السر"
@@ -366,10 +411,11 @@
         </button>
         <div class="review-header">
           <h2><i class="fas fa-praying-hands"></i> دعوات الأحباب</h2>
-          <div>
+          <div style="display: flex; gap: 8px">
             <button class="btn btn-outline btn-sm" onclick="uncheckAll()">
-              <i class="fas fa-sync-alt"></i> إلغاء الكل</button
-            ><button
+              <i class="fas fa-sync-alt"></i> إلغاء الكل
+            </button>
+            <button
               class="btn btn-primary btn-sm"
               id="saveProgressBtn"
               onclick="saveProgress()"
@@ -389,9 +435,9 @@
       const APP_URL =
         "https://script.google.com/macros/s/AKfycbyU4rr2Xivf7dyiN3pxRrFhQv68-zqd6BLY2XmHEhqd3kvtnf9Ql54GeVYu-qsUlCk/exec";
       let sessionPassword = "";
-      let currentData = []; // array of objects { name, duaa, done, rowIndex }
+      let currentData = [];
 
-      function showToast(msg, isErr) {
+      function showToast(msg) {
         const t = document.getElementById("toast");
         t.textContent = msg;
         t.classList.add("show");
@@ -417,8 +463,8 @@
         if (json.success) {
           sessionPassword = pw;
           goTo("page-review");
-          showToast("تم الدخول");
-        } else showToast("كلمة سر غلط");
+          showToast("تم الدخول ✅");
+        } else showToast("كلمة سر غلط ❌");
       }
 
       async function loadData() {
@@ -428,21 +474,16 @@
         );
         const json = await res.json();
         if (json.success) {
-          // تصفية البيانات: استبعاد أي عنصر يشبه عنوان العمود
           let filtered = json.data.filter((item) => {
-            // إذا كان الاسم أو الدعوة يساوي "الاسم" أو "الدعوة" أو "تاريخ" أو "تم" – نتخطى
             const name = String(item.name || "").trim();
             const duaa = String(item.duaa || "").trim();
             if (name === "الاسم" || duaa === "الدعوة") return false;
             if (name === "name" || duaa === "duaa") return false;
             if (name === "" || duaa === "") return false;
-            // أيضاً نتأكد إن اسم العمود مش موجود (مثلاً لو أول سطر جاي كعنوان)
             if (name === "تاريخ" || duaa === "دعوة") return false;
             return true;
           });
           currentData = filtered;
-          console.log(currentData);
-
           renderReview();
         } else showToast("خطأ في التحميل");
       }
@@ -456,7 +497,6 @@
           statsDiv.innerHTML = "";
           return;
         }
-
         const groups = {};
         currentData.forEach((item) => {
           if (!groups[item.name]) groups[item.name] = [];
@@ -465,7 +505,6 @@
         const total = currentData.length;
         const doneCount = currentData.filter((i) => i.done).length;
         statsDiv.innerHTML = `<div class="stat-chip">👥 ${Object.keys(groups).length} شخص</div><div class="stat-chip">🤲 ${total} دعوة</div><div class="stat-chip">✅ ${doneCount} تم الدعاء</div>`;
-
         let html = "";
         for (const name in groups) {
           html += `<div class="person-card"><div class="person-header"><i class="fas fa-user"></i> ${escapeHtml(name)}</div><div class="duaa-list">`;
@@ -517,8 +556,8 @@
             }),
           });
           const json = await res.json();
-          if (json.success) showToast("تم حفظ التقدم في الشيت");
-          else showToast("فشل الحفظ");
+          if (json.success) showToast("تم حفظ التقدم ✅");
+          else showToast("فشل الحفظ ❌");
         } catch (e) {
           showToast("خطأ في الاتصال");
         } finally {
@@ -535,38 +574,63 @@
           '<textarea placeholder="اكتب دعوتك..."></textarea><button class="btn-remove" onclick="removeRow(this)"><i class="fas fa-trash"></i></button>';
         container.appendChild(div);
       }
+
       function removeRow(btn) {
         if (document.querySelectorAll(".duaa-row").length > 1)
           btn.parentElement.remove();
         else showToast("لازم دعوة واحدة على الأقل");
       }
+
       function resetForm() {
         document.getElementById("input-name").value = "";
         document.getElementById("duaa-rows").innerHTML =
           '<div class="duaa-row"><textarea placeholder="اكتب دعوتك..."></textarea><button class="btn-remove" onclick="removeRow(this)"><i class="fas fa-trash"></i></button></div>';
+        // تأكد إن الزرار شغال من جديد لو الصفحة اتفتحت تاني
+        const btn = document.getElementById("submitBtn");
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> حفظ الدعوات';
       }
+
       async function submitDuaa() {
         const name = document.getElementById("input-name").value.trim();
-        if (!name) return showToast("اكتب اسمك");
+        if (!name) return showToast("اكتب اسمك ✍️");
         const texts = [...document.querySelectorAll("#duaa-rows textarea")]
           .map((t) => t.value.trim())
           .filter(Boolean);
-        if (!texts.length) return showToast("اكتب دعوة على الأقل");
-        const res = await fetch(APP_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            action: "save",
+        if (!texts.length) return showToast("اكتب دعوة على الأقل 🤲");
 
-            name,
-            duaas: texts,
-          }),
-        });
-        const json = await res.json();
-        if (json.success) {
-          showToast("تم الحفظ");
-          goTo("page-home");
-        } else showToast("فشل الحفظ");
+        // ← هنا التعديل: loading state + disable + cursor انتظار
+        const submitBtn = document.getElementById("submitBtn");
+        const cancelBtn = document.getElementById("cancelBtn");
+        const originalHtml = submitBtn.innerHTML;
+        submitBtn.innerHTML =
+          "<span class='loading-spinner'></span> جاري الحفظ...";
+        submitBtn.disabled = true;
+        cancelBtn.disabled = true;
+        document.body.style.cursor = "wait";
+
+        try {
+          const res = await fetch(APP_URL, {
+            method: "POST",
+            body: JSON.stringify({ action: "save", name, duaas: texts }),
+          });
+          const json = await res.json();
+          if (json.success) {
+            showToast("تم الحفظ ✅");
+            goTo("page-home");
+          } else {
+            showToast("فشل الحفظ ❌");
+          }
+        } catch (e) {
+          showToast("خطأ في الاتصال");
+        } finally {
+          submitBtn.innerHTML = originalHtml;
+          submitBtn.disabled = false;
+          cancelBtn.disabled = false;
+          document.body.style.cursor = "";
+        }
       }
+
       function escapeHtml(str) {
         return String(str).replace(/[&<>]/g, function (m) {
           if (m === "&") return "&amp;";
