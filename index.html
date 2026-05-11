@@ -484,6 +484,7 @@
             return true;
           });
           currentData = filtered;
+          currentData = filtered.sort(() => Math.random() - 0.5);
           renderReview();
         } else showToast("خطأ في التحميل");
       }
