@@ -526,7 +526,7 @@
           groups[name].forEach((item) => {
             const doneClass = item.done ? "done" : "";
             const checkedClass = item.done ? "checked" : "";
-            html += `<div class="duaa-item ${doneClass}"><span class="duaa-text">${escapeHtml(item.duaa)}</span><button class="check-btn ${checkedClass}" onclick="toggleDone(${item.rowIndex})">${item.done ? "✓" : ""}</button></div>`;
+            html += `<div class="duaa-item ${doneClass}" onclick="toggleDone(${item.rowIndex})"> <span class="duaa-text">${escapeHtml(item.duaa)}</span><button class="check-btn ${checkedClass}">${item.done ? "✓" : ""}</button></div>`;
           });
           html += `</div></div>`;
         }
