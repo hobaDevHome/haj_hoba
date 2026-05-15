@@ -189,24 +189,38 @@
         max-width: 800px;
         width: 100%;
       }
+
       .review-header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 24px;
-        flex-wrap: wrap;
-        gap: 12px;
-        align-items: center;
-      }
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+
+  position: sticky;
+  top: 0;
+  background: var(--bg-light);
+  padding: 12px 0;
+  z-index: 100;
+      } 
+      
       .review-header h2 {
         font-size: 24px;
         color: var(--primary);
       }
       .stats-bar {
-        display: flex;
-        gap: 16px;
-        margin-bottom: 24px;
-        flex-wrap: wrap;
-      }
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+
+  position: sticky;
+  top: 80px;
+  background: var(--bg-light);
+  padding-bottom: 12px;
+  z-index: 99;
+      } 
       .stat-chip {
         background: var(--bg-surface);
         padding: 6px 18px;
